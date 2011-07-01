@@ -35,7 +35,6 @@ class Ucp::Util::UcpClient
     @authcreds=authcreds
     @trn=0
     @mr=0
-    connect()
   end
 
   def connect

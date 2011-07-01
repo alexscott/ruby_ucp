@@ -67,7 +67,7 @@ end
 
 spec = Gem::Specification.new do |s|
   s.name = 'ruby_ucp'
-  s.version = '0.2.1'
+  s.version = '0.2.2'
   s.has_rdoc = true
   s.extra_rdoc_files = ['README', 'LICENSE']
   s.summary = 'EMI/UCP protocol library'
