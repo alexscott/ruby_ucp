@@ -18,21 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
 class Ucp::Util::GsmPackedMsg < Ucp::Util::PackedMsg
-
-
 #  attr_reader :encoded,:unencoded,:chars,:required_septets,:part_nr,:total_parts,:message_ref
-  
-  @encoded=""
-  @unencoded=""
-  @required_septets=0
-  @chars=0
-
-  # ??
-  #@dcs=nil
-
-#  @part_nr=nil
-#  @total_parts=nil
-#  @message_ref=nil
 
   def initialize(encoded,unencoded,chars,required_septets,tainted=false)
     @encoded=encoded
@@ -40,11 +26,9 @@ class Ucp::Util::GsmPackedMsg < Ucp::Util::PackedMsg
     @chars=chars
     @required_septets=required_septets
     @tainted=tainted
-
-#    @part_nr=1
-#    @total_parts=1
-#    @message_ref=0
   end
 
-
+  def to_s
+    @encoded
+  end
 end

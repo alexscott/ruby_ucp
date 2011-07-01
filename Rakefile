@@ -33,10 +33,10 @@ begin
   Jeweler::Tasks.new do |s|
     s.name = "ruby_ucp"
     s.summary = "EMI/UCP protocol library"
-    s.email = "sergio.freire@gmail.com"
-    s.homepage = "https://github.com/bitcoder/ruby_ucp"
-    s.description = "Ruby library implementation of EMI/UCP protocol v4.6 for SMS"
-    s.authors = ["Sergio Freire"]
+    s.email = ["sergio.freire@gmail.com", "ninkibah@eircom.net"]
+    s.homepage = "https://github.com/ninkibah/ruby_ucp"
+    s.description = "Ruby library implementation of EMI/UCP protocol v4.6 for SMS forked by Jonathan to fix Ucp51Operation"
+    s.authors = ["Sergio Freire", "Jonathan O'Connor"]
     s.files =  FileList["[A-Z]*", "{bin,generators,lib,test}/**/*", 'lib/jeweler/templates/.gitignore']
     #s.add_dependency 'schacon-git'
   end
@@ -67,7 +67,7 @@ end
 
 spec = Gem::Specification.new do |s|
   s.name = 'ruby_ucp'
-  s.version = '0.2.0'
+  s.version = '0.2.1'
   s.has_rdoc = true
   s.extra_rdoc_files = ['README', 'LICENSE']
   s.summary = 'EMI/UCP protocol library'

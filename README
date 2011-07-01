@@ -6,7 +6,10 @@ Please consult up-to-date information in ruby_ucp's wiki: https://github.com/bit
 Official releases can be obtained directly from RubyGems: https://rubygems.org/gems/ruby_ucp.
 The following information may not be up-to-date; it is here just for quick access. See the wiki site.
 
-Sergio Freire <sergio.freire at gmail.com>
+This is a fork from Sergio Freire's original ruby_ucp project. It has fixes for GsmPackedMsg, as it needed
+a to_s method. It also had no tests.
+
+Jonathan O'Connor <ninkibah at eircom.net>
 
 
 Introduction
