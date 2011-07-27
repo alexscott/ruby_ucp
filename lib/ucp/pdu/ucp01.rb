@@ -21,16 +21,16 @@ class Ucp::Pdu::UCP01 < Ucp::Pdu::UCPMessage
 
   def initialize()
     super()
-    @operation="01"
+    @operation = "01"
   end
 
-  def set_fields(ucpfields={})
-    @h=@h.merge ucpfields
+  def set_fields(ucpfields = {})
+    @h = @h.merge ucpfields
   end
 
-  def initialize_message(ucpfields={})
+  def initialize_message(ucpfields = {})
     super()
-    @h=@h.merge ucpfields
+    @h = @h.merge ucpfields
   end
 
 end

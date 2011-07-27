@@ -17,7 +17,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
-
 require "socket"
 
 include Ucp::Pdu
@@ -25,47 +24,40 @@ include Ucp::Util
 
 class Ucp::Util::UcpClient
 
-  @trn=0
-  @mr=0
-
-  def initialize(host,port, authcreds=nil)
-    @host=host
-    @port=port
-    @connected=false
-    @authcreds=authcreds
-    @trn=0
-    @mr=0
+  def initialize(host, port, authcreds = nil)
+    @host = host
+    @port = port
+    @connected = false
+    @authcreds = authcreds
+    @trn = 0
+    @mr = 0
   end
 
   def connect
-    #puts "connect()"
-    
     begin
-        @socket = TCPSocket.new(@host, @port)
-        @connected=true
-        @trn=0
+      @socket = TCPSocket.new(@host, @port)
+      @connected = true
+      @trn = 0
     rescue
-        @connected=false
-        return false
+      @connected = false
+      return false
     end
 
+    if @authcreds
+      auth_ucp = Ucp60Operation.new
+      auth_ucp.basic_auth(@authcreds[:login], @authcreds[:password])
+      auth_ucp.trn = "00"
+      answer = send_sync(auth_ucp)
 
-    if !@authcreds.nil?
-      auth_ucp=Ucp60Operation.new
-      auth_ucp.basic_auth(@authcreds[:login],@authcreds[:password])
-      auth_ucp.trn="00"
-      answer=send_sync(auth_ucp)
-      #puts "Crecv: #{answer.to_s}\n"
-      
-      if !answer.nil? && answer.is_ack?
-        inc_trn()
+      if good_answer(answer)
+        next_trn
         return true
       else
-        close()
+        close
         return false
       end
     end
-
+    # What happens when @authcreds is nil? Then we don't
   end
 
   def close
@@ -73,134 +65,128 @@ class Ucp::Util::UcpClient
       @socket.close
     rescue
     end
-    @connected=false
+    @connected = false
   end
 
   def connected?
-    if !@socket.nil? && !@socket.closed? && @connected
-      @connected=true
+    if @socket && !@socket.closed? && @connected
+      @connected = true
     else
-      @connected=false
+      @connected = false
     end
-    return @connected
+    @connected
   end
 
   def send_sync(ucp)
-    #puts "XXXX0"
-
-    if !connected?
-      connect()
+    unless !connected?
+      connect
       # se nao foi possivel ligar, retornar imediatamente com erro
-      if !connected?
-        return nil
-      end
+      return nil unless connected?
     end
 
-    #puts "XXXX1"
-    
-    answer=nil
     begin
-        @socket.print ucp.to_s
-        puts "Csent: #{ucp.to_s}\n"
-        answer = @socket.gets(3.chr)
-        #answer = @socket.gets("#")
-        puts "Crecv: #{answer.to_s}\n"
+      @socket.print ucp.to_s
+      puts "Csent: #{ucp}\n"
+      answer = read_with_timeout(3.chr, nil)
+      puts "Crecv: #{answer}\n"
     rescue
-        puts "error: #{$!}"
-        @connected=false
+      puts "error: #{$!}"
+      close
+      return nil
     end
 
     # verificar o trn da resposta face a submissao
-    replyucp=UCP.parse_str(answer)
-    return nil if replyucp.nil?
+    replyucp = UCP.parse_str(answer)
+    return nil unless replyucp
 
-    if !ucp.trn.eql?(replyucp.trn)
-      puts "unexpected trn #{replyucp.trn}. should be #{ucp.trn}"
-      return nil
+    if ucp.trn == replyucp.trn
+      replyucp
     else
-      return replyucp
+      puts "unexpected trn #{replyucp.trn}. Should be #{ucp.trn}"
+      nil
     end
   end
 
   def send(ucp)
-    if !connected?
-      connect()
+    unless connected?
+      connect
       # se nao foi possivel ligar, retornar imediatamente com erro
-      if !connected?
-        return false
-      end
+      return false unless connected?
     end
 
     begin
-        @socket.print ucp.to_s
+      @socket.print ucp.to_s
     rescue
-        puts "error: #{$!}"
-        # deu erro, vamos fechar o socket
-        close()
-        # error
-        return false
+      puts "error: #{$!}"
+      # deu erro, vamos fechar o socket
+      close
+      # error
+      return false
     end
 
     # OK
-    return true
+    true
   end
 
-  def read
-    answer=nil
+  # @param [Integer] timeout_in_seconds nil if no timeouts, otherwise we exit with a nil if the socket does not return any data after it times out.
+  def read(timeout_in_seconds = nil)
     begin
-        answer = @socket.gets(3.chr)
+      read_with_timeout(3.chr, timeout_in_seconds)
     rescue
-        puts "error: #{$!}"
-        # deu erro, vamos fechar o socket
-        close()
+      puts "error: #{$!}"
+      # deu erro, vamos fechar o socket
+      close
+      nil
+    end
+  end
+
+  def send_message(originator, recipient, message)
+    ucps = UCP.make_multi_ucps(originator, recipient, message, next_mr)
+
+    ucps.each do |ucp|
+      ucp.trn = UCP.int2hex(next_trn)
+      ans = send_sync(ucp)
+      return false unless good_answer(ans)
     end
 
-    return answer
-  end
-
-  def send_message(originator,recipient,message)
-    #ucp=Ucp51Operation.new(originator,recipient,message)
-
-    ucps=UCP.make_multi_ucps(originator,recipient,message,@mr)
-    inc_mr()
-
-    ucps.each { |ucp|      
-      ucp.trn=UCP.int2hex(@trn)
-      ans=send_sync(ucp)
-      inc_trn()
-#      puts "e um ack: #{ans.nil?} ; #{ans.is_ack?}"
-      return false if ans.nil? || !ans.is_ack?
-    }
-
-
-    return true
+    true
   end
 
 
-  def send_alert(recipient,pid)
-    ucp=Ucp31Operation.new
-    ucp.basic_alert(recipient,pid)
+  def send_alert(recipient, pid)
+    ucp = Ucp31Operation.new
+    ucp.basic_alert(recipient, pid)
 
-    trn=UCP.int2hex(@trn)
-    ucp.trn=trn
-    ans=send_sync(ucp)
-    inc_trn()
-#      puts "e um ack: #{ans.nil?} ; #{ans.is_ack?}"
-    return false if ans.nil? || !ans.is_ack?
-
-    return true
+    ucp.trn = UCP.int2hex(next_trn)
+    ans = send_sync(ucp)
+    good_answer(ans)
   end
 
-
-
-  def inc_trn
-   @trn+=1
-   @trn=0 if @trn>99
+  def next_trn
+    trn = @trn
+    @trn += 1
+    @trn = 0 if @trn > 99
+    trn
   end
 
-  def inc_mr
-   @mr+=1
-   @mr=0 if @mr>255
+  def next_mr
+    mr = @mr
+    @mr += 1
+    @mr = 0 if @mr > 255
+    mr
   end
 
+  private
+  # @param [Ucp::Pdu::UCPMessage]
+  # @return [Boolean] true if the answer message exists and is an ack.
+  def good_answer(answer)
+    answer && answer.is_ack?
+  end
+
+  def read_with_timeout(separator, timeout_in_seconds)
+    if timeout_in_seconds
+      return nil unless select([@socket], nil, nil, timeout_in_seconds)
+    end
+    @socket.gets(separator)
+  end
 end
