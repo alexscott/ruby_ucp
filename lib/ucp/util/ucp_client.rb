@@ -78,7 +78,7 @@ class Ucp::Util::UcpClient
   end
 
   def send_sync(ucp)
-    unless !connected?
+    unless connected?
       connect
       # se nao foi possivel ligar, retornar imediatamente com erro
       return nil unless connected?
@@ -128,7 +128,10 @@ class Ucp::Util::UcpClient
     true
   end
 
+  # Reads a message from the socket.
   # @param [Integer] timeout_in_seconds nil if no timeouts, otherwise we exit with a nil if the socket does not return any data after it times out.
+  # @return [String] The raw string containing the UCP message
+  # TODO Consider returning the raw message as a UCP message object.
   def read(timeout_in_seconds = nil)
     begin
       read_with_timeout(3.chr, timeout_in_seconds)
