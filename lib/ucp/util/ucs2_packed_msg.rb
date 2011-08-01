@@ -19,11 +19,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 class Ucp::Util::Ucs2PackedMsg < Ucp::Util::PackedMsg
 
-  def initialize(encoded,unencoded,chars,required_octets)
-    @encoded=encoded
-    @unencoded=unencoded
-    @chars=chars
-    @required_octets=required_octets
+  def initialize(encoded, unencoded, chars, required_octets)
+    @encoded = encoded
+    @unencoded = unencoded
+    @chars = chars
+    @required_octets = required_octets
   end
 
 end

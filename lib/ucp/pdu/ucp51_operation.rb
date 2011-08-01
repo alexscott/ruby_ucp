@@ -22,7 +22,7 @@ class Ucp::Pdu::Ucp51Operation < Ucp::Pdu::UCP5x
 
    def initialize(fields=nil)
     super()
-    @operation="51"
+    @operation = "51"
     @operation_type="O"
     #@fields=[:adc,:oadc,:ac,:nrq,:nadc,:nt,:npid,:lrq,:lrad,:lpid,:dd,:ddt,:vp,:rpid,:scts,:dst,:rsn,:dscts,:mt,:nb,:msg,:mms,:pr,:dcs,:mcls,:rpi,:cpg,:rply,:otoa,:hplmn,:xser,:res4,:res5]
     
@@ -37,11 +37,11 @@ class Ucp::Pdu::Ucp51Operation < Ucp::Pdu::UCP5x
 #    *00/00352/O/51/961234567/1234/////////////////4/1072/31D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C56433//////////0106050003450201///44#
 
      for i in 4..(fields.length-1)
-       field=@fields[i-4]
+       field=@field_names[i-4]
        if field.eql?(:xser)
          add_xser_raw(fields[i])
        else
-         @h[field]=fields[i]
+         @field_values[field]=fields[i]
        end
      end
      
@@ -145,9 +145,9 @@ class Ucp::Pdu::Ucp51Operation < Ucp::Pdu::UCP5x
 
 
 
-    @h={:otoa=>otoa,:oadc=>oadc, :adc=>recipient, :msg=>msg,:mt=>mt}
+    @field_values={:otoa=>otoa,:oadc=>oadc, :adc=>recipient, :msg=>msg,:mt=>mt}
 
-    @h=@h.merge ucpfields
+    @field_values=@field_values.merge ucpfields
   end
 
   def to_s
@@ -157,7 +157,7 @@ class Ucp::Pdu::Ucp51Operation < Ucp::Pdu::UCP5x
      @xservices.each { |xser|
       xserstr+=xser
      }
-     @h[:xser]=xserstr
+     @field_values[:xser]=xserstr
    end
 
    super()

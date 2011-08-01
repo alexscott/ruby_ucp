@@ -17,15 +17,10 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
-
-require "ucp/pdu/ucp51_result.rb"
-
 class Ucp::Pdu::Ucp57Result < Ucp::Pdu::Ucp51Result
-
-  def initialize(fields=nil)
+  def initialize(fields = nil)
     super(fields)
-    @operation="57"
+    @operation = "57"
   end
-
 end
 

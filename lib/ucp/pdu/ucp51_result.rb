@@ -17,48 +17,34 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
-
 class Ucp::Pdu::Ucp51Result < Ucp::Pdu::UCP5x
-
-  def initialize(fields=nil)
+  def initialize(fields = nil)
     super()
-    @operation="51"
-    @operation_type="R"
-    if fields.nil?
-      return
-    end
+    @operation = "51"
+    @operation_type = "R"
+    return unless fields
 
-    @trn=fields[0]
-    if fields[4].eql?("A")
+    @trn = fields[0]
+    case fields[4]
+    when "A"
       # 00/00039/R/51/A//012234:090996101010/68
-      ack(fields[5],fields[6])
-    elsif fields[4].eql?("N")
+      ack(fields[5], fields[6])
+    when "N"
       # 00/00022/R/51/N/31//07
-      nack(fields[5],fields[6])
+      nack(fields[5], fields[6])
     else
       raise "invalid result in UCP51"
     end
-
-    # TODO: verificar len e checksum
-
   end
 
-
-  def ack(mvp="",sm="")
-    @fields=[:ack,:mvp,:sm]
-    @h[:ack]="A"
-    @h[:mvp]=mvp
-    @h[:sm]=sm
+  def ack(mvp = "", sm = "")
+    @field_names = [:ack, :mvp, :sm]
+    @field_values = {:ack => "A", :mvp => mvp, :sm => sm}
   end
 
-  def nack(ec,sm="")
-    @fields=[:nack,:ec,:sm]
-    @h[:nack]="N"
-    @h[:ec]=ec
-    @h[:sm]=sm
+  def nack(ec, sm = "")
+    @field_names = [:nack, :ec, :sm]
+    @field_values = {:nack => "N", :ec => ec, :sm => sm}
   end
-
-
-
 end
 

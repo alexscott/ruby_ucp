@@ -24,17 +24,8 @@ class Ucp::Pdu::UCP5x < Ucp::Pdu::UCPMessage
   
   def initialize()
     super()
-    @xservices=Array.new
-    @fields=[:adc,:oadc,:ac,:nrq,:nadc,:nt,:npid,:lrq,:lrad,:lpid,:dd,:ddt,:vp,:rpid,:scts,:dst,:rsn,:dscts,:mt,:nb,:msg,:mms,:pr,:dcs,:mcls,:rpi,:cpg,:rply,:otoa,:hplmn,:xser,:res4,:res5]
+    @xservices = []
+    @field_names = [:adc, :oadc, :ac, :nrq, :nadc, :nt, :npid, :lrq, :lrad, :lpid, :dd, :ddt, :vp, :rpid, :scts, :dst, :rsn, :dscts,
+                    :mt, :nb, :msg, :mms, :pr, :dcs, :mcls, :rpi, :cpg, :rply, :otoa, :hplmn, :xser, :res4, :res5]
   end
-
-  def set_fields(ucpfields={})
-    @h=@h.merge ucpfields
-  end
-
-  def initialize_message(ucpfields={})
-    super()
-    @h=@h.merge ucpfields
-  end
-
 end

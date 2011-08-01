@@ -17,47 +17,36 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
-class Ucp::Pdu::Ucp30Result < Ucp::Pdu::UCP30
+class Ucp::Pdu::Ucp30Result < Ucp::Pdu::UCPMessage
 
-  def initialize(fields=nil)
-    super()
-    @operation="30"
-    @operation_type="R"
-    if fields.nil?
-      return
-    end
+  def initialize(fields = nil)
+    super("R", "30")
+    return unless fields
 
-    @trn=fields[0]
-    if fields[4].eql?("A")
+    @trn = fields[0]
+    if fields[4] == "A"
       # 10/00039/R/30/A//067345:070295121212/6F
-      ack(fields[5],fields[6])
-    elsif fields[4].eql?("N")
+      ack(fields[5], fields[6])
+    elsif fields[4] == "N"
       # 11/00022/R/30/N/24//08
-      nack(fields[5],fields[6])
+      nack(fields[5], fields[6])
     else
-      raise "invalid result in UCP51"
+      raise "invalid result in UCP30"
     end
-
-    # TODO: verificar len e checksum
-
   end
 
 
-  def ack(mvp="",sm="")
-    @fields=[:ack,:sm]
-    @h[:ack]="A"
-    @h[:mvp]=mvp
-    @h[:sm]=sm
+  def ack(mvp = "", sm = "")
+    @field_names=[:ack, :sm] # should this also include mvp - TODO check spec
+    @field_values[:ack] = "A"
+    @field_values[:mvp] = mvp
+    @field_values[:sm] = sm
   end
 
-  def nack(ec,sm="")
-    @fields=[:nack,:ec,:sm]
-    @h[:nack]="N"
-    @h[:ec]=ec
-    @h[:sm]=sm
+  def nack(ec, sm = "")
+    @field_names=[:nack, :ec, :sm]
+    @field_values[:nack] = "N"
+    @field_values[:ec] = ec
+    @field_values[:sm] = sm
   end
-
-
-
 end
-

@@ -20,18 +20,23 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 $:.unshift(File.dirname(__FILE__))
 
+if RUBY_VERSION < "1.9"
+  class String
+    def ord
+      self[0]
+    end
+  end
+end
+
 require "ucp/base.rb"
 require "ucp/pdu/base.rb"
 require "ucp/pdu/ucpmessage.rb"
 require "ucp/pdu/ucp_operation.rb"
 require "ucp/pdu/ucp_result.rb"
-require "ucp/pdu/ucp01.rb"
 require "ucp/pdu/ucp01_operation.rb"
 require "ucp/pdu/ucp01_result.rb"
-require "ucp/pdu/ucp30.rb"
 require "ucp/pdu/ucp30_operation.rb"
 require "ucp/pdu/ucp30_result.rb"
-require "ucp/pdu/ucp31.rb"
 require "ucp/pdu/ucp31_operation.rb"
 require "ucp/pdu/ucp31_result.rb"
 require "ucp/pdu/ucp5x.rb"
@@ -51,10 +56,8 @@ require "ucp/pdu/ucp57_operation.rb"
 require "ucp/pdu/ucp57_result.rb"
 require "ucp/pdu/ucp58_operation.rb"
 require "ucp/pdu/ucp58_result.rb"
-require "ucp/pdu/ucp60.rb"
 require "ucp/pdu/ucp60_operation.rb"
 require "ucp/pdu/ucp60_result.rb"
-require "ucp/pdu/ucp61.rb"
 require "ucp/pdu/ucp61_result.rb"
 require "ucp/pdu/ucp61_operation.rb"
 require "ucp/util/base.rb"

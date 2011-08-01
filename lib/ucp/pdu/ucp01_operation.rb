@@ -17,45 +17,24 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
-class Ucp::Pdu::Ucp01Operation  < Ucp::Pdu::UCP01
+class Ucp::Pdu::Ucp01Operation  < Ucp::Pdu::UcpOperation
 
-  def initialize(fields=nil)
-    super()
-    @operation_type="O"
-    @fields=[:adc,:oadc,:ac,:mt,:msg]
-
-    if fields.nil?
-      return
-    end
-
-    @trn=fields[0]
-    @operation_type=fields[2]
-    @operation=fields[3]
-
-    # *02/00050/O/01/961234567/0931D98C8607//3/6F7618/72#
-
-     for i in 4..(fields.length-1)
-       field=@fields[i-4]
-       @h[field]=fields[i]
-     end
-
-
+  # @param [Array] fields This has a wierd signature
+  # The first element seems to be the transaction nr. The third field is the operation type.
+  # The fourth, the operation. Then the next are values for adc, oadc, ac, mt an msg fields.
+  # A better way to do this would be to use a hash from field to value - Much more rubyish
+  def initialize(fields = nil)
+    super("01", [:adc, :oadc, :ac, :mt, :msg], fields)
   end
 
- def basic_submit(originator,recipient,message,ucpfields={})
-    #super()
-    #@operation_type="O"
-    #@fields=[:adc,:oadc,:ac,:mt,:msg]
-
+ def basic_submit(originator, recipient, message, ucpfields = {})
     # UCP01 only supports IRA encoded SMS (7bit GSM alphabet chars, encoded in 8bits)
-    msg=UCP.ascii2ira(message).encoded
+    msg = UCP.ascii2ira(message).encoded
 
     # UCP01 does NOT support alphanumeric oadc
-    oadc=originator
+    oadc = originator
 
-    @h={:oadc=>oadc, :adc=>recipient, :msg=>msg,:mt=>3}
-    
-    @h=@h.merge ucpfields
+    @field_values = {:oadc => oadc, :adc => recipient, :msg => msg, :mt => 3}
+    @field_values.merge! ucpfields
   end
-
 end

@@ -67,7 +67,7 @@ end
 
 spec = Gem::Specification.new do |s|
   s.name = 'ruby_ucp'
-  s.version = '0.2.4'
+  s.version = '0.2.5'
   s.has_rdoc = true
   s.extra_rdoc_files = ['README', 'LICENSE']
   s.summary = 'EMI/UCP protocol library'
@@ -80,10 +80,18 @@ spec = Gem::Specification.new do |s|
   s.bindir = "bin"
 end
 
-Rake::GemPackageTask.new(spec) do |p|
-  p.gem_spec = spec
-  p.need_tar = true
-  p.need_zip = true
+if RUBY_VERSION < "1.9"
+  Rake::GemPackageTask.new(spec) do |p|
+    p.gem_spec = spec
+    p.need_tar = true
+    p.need_zip = true
+  end
+else
+  Gem::PackageTask.new(spec) do |p|
+    p.gem_spec = spec
+    p.need_tar = true
+    p.need_zip = true
+  end
 end
 
 

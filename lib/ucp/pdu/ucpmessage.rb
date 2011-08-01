@@ -19,107 +19,80 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 module Ucp::Pdu
 
+  class UCPMessage
+    DELIMITER = "/"
+    STX = 2.chr
+    ETX = 3.chr
 
-class UCPMessage 
-  DELIMITER="/"
-  STX=2.chr
-  ETX=3.chr
+    attr_reader :operation, :operation_type, :dcs, :message_ref, :part_nr, :total_parts
+    attr_accessor :trn
 
+    # usado pelas classes que o extendem
+    # @param [String] operation_type can be either "O" for operation, or "R" for result
+    # @param [String] operation is one of the UCP defined operation numbers.
+    def initialize(operation_type = "O", operation = "")
+      @operation = operation
+      @operation_type = operation_type
+      @dcs = "01"
 
-  @fields=[]
-  @h={}
+      @trn = "00"
+      @field_names = []
+      @field_values = Hash.new
 
-#  @@trn="00"
-  attr_reader :operation
-  attr_reader :operation_type
-  attr_accessor :trn
-  attr_reader :dcs
-  attr_reader :message_ref, :part_nr, :total_parts
+      @message_ref = 0
+      @part_nr = 1
+      @total_parts = 1
+    end
 
-  # usado pelas classes que o extendem
-  def initialize()
-    @dcs="01"
+    def get_field(field)
+      @field_values[field]
+    end
 
-    @trn="00"
-    @fields=[]
-    @h=Hash.new
+    def set_field(field, value)
+      @field_values[field] = value
+    end
 
-    @message_ref=0
-    @part_nr=1
-    @total_parts=1
-  end
-
-  def get_field(field)
-    return @h[field]
-  end
-
-  def set_field(field,value)
-    @h[field]=value
-  end
-
-  def set_fields(ucpfields={})
-    @h=@h.merge ucpfields
-  end
+    def set_fields(ucpfields = {})
+      @field_values = @field_values.merge ucpfields
+    end
 
 
-  def is_operation?
-    return @operation_type=="O"
-  end
+    def is_operation?
+      @operation_type == "O"
+    end
 
-  def is_result?
-    return @operation_type=="R"
-  end
+    def is_result?
+      @operation_type == "R"
+    end
 
     def is_ack?
-    return @h.has_key?(:ack)
-  end
+      @field_values.has_key?(:ack)
+    end
 
-  def is_nack?
-    return @h.has_key?(:nack)
-  end
-  
-  def checksum(s)
+    def is_nack?
+      @field_values.has_key?(:nack)
+    end
+
     # The <checksum> is derived by the addition of all bytes of the header, data field separators
     # and data fields (i.e. all characters after the stx-character, up to and including the last “/”
     # before the checksum field). The 8 Least Significant Bits (LSB) of the result is then
     # represented as two printable characters.
+    def checksum(s)
+      sum = 0
+      s.each_byte { |byte| sum += byte }
+      sum.to_s(16)[-2, 2].upcase
+    end
 
-    sum=0
-    s.each_byte { |byte|
-      sum+=byte
-    }
-    #return sprintf("%02x",sum)[-2,2]
-    return sum.to_s(16)[-2,2].upcase
+    def length(s)
+      sprintf("%05d", s.length + 16)
+    end
+
+    # Converts the message to raw string ready for transmission.
+    def to_s
+      s = @field_names.map {|field| @field_values[field] ? @field_values[field].to_s : ""}.join(DELIMITER) + DELIMITER
+
+      pdu = ["#{@trn}", length(s), @operation_type, @operation, s].join(DELIMITER)
+      "#{STX}#{pdu}#{checksum(pdu)}#{ETX}"
+    end
   end
-
-  def length(s)
-    return sprintf("%05d",s.length+16)
-  end
-
-  def to_s
-
-    s=""
-    @fields.each{ |key|
-      value=@h[key]
-      if value.nil?
-        s+=DELIMITER
-      else
-        s+=value.to_s+DELIMITER
-      end
-    }
-
-
-    pdu=@trn+DELIMITER
-    pdu+=length(s)+DELIMITER
-    pdu+=@operation_type+DELIMITER
-    pdu+=@operation+DELIMITER
-    pdu+=s
-    pdu+=checksum(pdu)
-    pdu=STX+pdu+ETX
-    return pdu
-  end
-
-end # class
-
-
 end # module

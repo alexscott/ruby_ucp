@@ -18,41 +18,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
 
-class Ucp::Pdu::Ucp60Operation < Ucp::Pdu::UCP60
-
-   def initialize(fields=nil)
-    super()
-    #@operation="60"
-    @operation_type="O"
-    @fields=[:oadc,:oton,:onpi,:styp,:pwd,:npwd,:vers,:ladc,:lton,:lnpi,:opid,:res1]
-
-    if fields.nil?
-      return
-    end
-
-
-    @trn=fields[0]
-    @operation_type=fields[2]
-    @operation=fields[3]
-
-     # *00/00050/O/60/8006/6/5/1/F474FB2D07//0100//////15#
-
-     for i in 4..(fields.length-1)
-       field=@fields[i-4]
-       @h[field]=fields[i]
-     end
-
+class Ucp::Pdu::Ucp60Operation < Ucp::Pdu::UcpOperation
+  def initialize(fields = nil)
+    super("60", [:oadc, :oton, :onpi, :styp, :pwd, :npwd, :vers, :ladc, :lton, :lnpi, :opid, :res1], fields)
   end
 
-
-
-
- def basic_auth(originator,password,ucpfields={})
-    #super()
-    #@operation_type="O"
-    
-    @h={:oadc=>originator, :pwd=>UCP.ascii2ira(password).encoded, :vers=>"0100", :styp=>"1", :oton=>"6",:onpi=>"5"}
-    @h=@h.merge ucpfields
+  def basic_auth(originator, password, ucpfields = {})
+    @field_values = {:oadc => originator, :pwd => UCP.ascii2ira(password).encoded, :vers => "0100", :styp => "1", :oton => "6", :onpi => "5"}.merge ucpfields
   end
-
 end

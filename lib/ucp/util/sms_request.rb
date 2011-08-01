@@ -22,27 +22,27 @@ class Ucp::Util::SmsRequest
 
   attr_reader :source_ip, :source_port, :originator, :recipient, :text, :account, :message_ref, :part_nr, :total_parts
 
-  def initialize(originator,recipient,text,account=nil,source_ip=nil,source_port=nil)
-    @account=account
-    @source_ip=source_ip
-    @source_port=source_port
-    @originator=originator
-    @recipient=recipient
-    @text=text
+  def initialize(originator, recipient, text, account = nil, source_ip = nil, source_port = nil)
+    @account = account
+    @source_ip = source_ip
+    @source_port = source_port
+    @originator = originator
+    @recipient = recipient
+    @text = text
   end
 
-  def set_parts_info(message_ref,part_nr,total_parts)
-    @message_ref=message_ref
-    @part_nr=part_nr
-    @total_parts=total_parts
+  def set_parts_info(message_ref, part_nr, total_parts)
+    @message_ref = message_ref
+    @part_nr = part_nr
+    @total_parts = total_parts
   end
 
   def complete?
-    return @total_parts==1
+    @total_parts == 1
   end
 
   def partial?
-    return @total_parts>1
+    @total_parts > 1
   end
 
 end

@@ -18,42 +18,19 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
 
-class Ucp::Pdu::Ucp30Operation  < Ucp::Pdu::UCP30
-
-  def initialize(fields=nil)
-    super()
-    @operation_type="O"
-    @fields=[:adc,:oadc,:ac,:nrq,:nad,:npid,:dd,:ddt,:vp,:amsg]
-
-    if fields.nil?
-      return
-    end
-
-    @trn=fields[0]
-    @operation_type=fields[2]
-    @operation=fields[3]
-
-    # 44/00077/O/30/0673845336//////1/1003961344/1203961200/4D657373616765204F4B/27
-
-     for i in 4..(fields.length-1)
-       field=@fields[i-4]
-       @h[field]=fields[i]
-     end
-
-
+class Ucp::Pdu::Ucp30Operation  < Ucp::Pdu::UcpOperation
+  def initialize(fields = nil)
+    super("30", [:adc, :oadc, :ac, :nrq, :nad, :npid, :dd, :ddt, :vp, :amsg], fields)
   end
 
- def basic_submit(originator,recipient,message,ucpfields={})
-
+  def basic_submit(originator, recipient, message, ucpfields = {})
     # UCP30 only supports IRA encoded SMS (7bit GSM alphabet chars, encoded in 8bits)
-    msg=UCP.ascii2ira(message).encoded
+    msg = UCP.ascii2ira(message).encoded
 
     # UCP30 does NOT support alphanumeric oadc
-    oadc=originator
+    oadc = originator
 
-    @h={:oadc=>oadc, :adc=>recipient, :amsg=>msg}
-    
-    @h=@h.merge ucpfields
+    @field_values = {:oadc => oadc, :adc => recipient, :amsg => msg}.merge ucpfields
   end
 
 end

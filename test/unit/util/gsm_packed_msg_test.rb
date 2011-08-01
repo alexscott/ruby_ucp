@@ -1,5 +1,5 @@
 require "test/unit"
-require "lib/ruby_ucp"
+require File.join(File.dirname(__FILE__), '../../../lib', 'ruby_ucp')
 
 class GsmPackedMsgTest < Test::Unit::TestCase
 

@@ -5,13 +5,13 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ruby_ucp}
-  s.version = "0.2.4"
+  s.version = "0.2.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Sergio Freire", "Jonathan O'Connor"]
-  s.date = %q{2011-07-28}
+  s.authors = [%q{Sergio Freire}, %q{Jonathan O'Connor}]
+  s.date = %q{2011-08-01}
   s.description = %q{Ruby library implementation of EMI/UCP protocol v4.6 for SMS forked by Jonathan to fix Ucp51Operation}
-  s.email = ["sergio.freire@gmail.com", "ninkibah@eircom.net"]
+  s.email = [%q{sergio.freire@gmail.com}, %q{ninkibah@eircom.net}]
   s.extra_rdoc_files = [
     "LICENSE",
     "README"
@@ -26,13 +26,10 @@ Gem::Specification.new do |s|
     "lib/samples/main.rb",
     "lib/ucp/base.rb",
     "lib/ucp/pdu/base.rb",
-    "lib/ucp/pdu/ucp01.rb",
     "lib/ucp/pdu/ucp01_operation.rb",
     "lib/ucp/pdu/ucp01_result.rb",
-    "lib/ucp/pdu/ucp30.rb",
     "lib/ucp/pdu/ucp30_operation.rb",
     "lib/ucp/pdu/ucp30_result.rb",
-    "lib/ucp/pdu/ucp31.rb",
     "lib/ucp/pdu/ucp31_operation.rb",
     "lib/ucp/pdu/ucp31_result.rb",
     "lib/ucp/pdu/ucp51_operation.rb",
@@ -52,10 +49,8 @@ Gem::Specification.new do |s|
     "lib/ucp/pdu/ucp58_operation.rb",
     "lib/ucp/pdu/ucp58_result.rb",
     "lib/ucp/pdu/ucp5x.rb",
-    "lib/ucp/pdu/ucp60.rb",
     "lib/ucp/pdu/ucp60_operation.rb",
     "lib/ucp/pdu/ucp60_result.rb",
-    "lib/ucp/pdu/ucp61.rb",
     "lib/ucp/pdu/ucp61_operation.rb",
     "lib/ucp/pdu/ucp61_result.rb",
     "lib/ucp/pdu/ucp_operation.rb",
@@ -70,12 +65,13 @@ Gem::Specification.new do |s|
     "lib/ucp/util/ucp_client.rb",
     "lib/ucp/util/ucp_server.rb",
     "lib/ucp/util/ucs2_packed_msg.rb",
+    "test/unit/pdu/ucp30_operation_test.rb",
     "test/unit/pdu/ucp51_operation_test.rb",
     "test/unit/util/gsm_packed_msg_test.rb"
   ]
   s.homepage = %q{https://github.com/ninkibah/ruby_ucp}
-  s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.5.3}
+  s.require_paths = [%q{lib}]
+  s.rubygems_version = %q{1.8.6}
   s.summary = %q{EMI/UCP protocol library}
 
   if s.respond_to? :specification_version then

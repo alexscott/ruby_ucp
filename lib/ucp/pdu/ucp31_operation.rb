@@ -18,33 +18,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
 
-class Ucp::Pdu::Ucp31Operation  < Ucp::Pdu::UCP31
-
-  def initialize(fields=nil)
-    super()
-    @operation_type="O"
-    @fields=[:adc,:pid]
-
-    if fields.nil?
-      return
-    end
-
-    @trn=fields[0]
-    @operation_type=fields[2]
-    @operation=fields[3]
-
-    # *02/00035/O/31/0234765439845/0139/A0#
-
-     for i in 4..(fields.length-1)
-       field=@fields[i-4]
-       @h[field]=fields[i]
-     end
-
-
+class Ucp::Pdu::Ucp31Operation  < Ucp::Pdu::UcpOperation
+  def initialize(fields = nil)
+    super("31", [:adc, :pid], fields)
   end
 
- def basic_alert(recipient,pid)
-    @h={:adc=>recipient, :pid=>pid}
- end
-
+  def basic_alert(recipient, pid)
+    @field_values = {:adc => recipient, :pid => pid}
+  end
 end

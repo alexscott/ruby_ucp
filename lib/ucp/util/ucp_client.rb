@@ -69,12 +69,7 @@ class Ucp::Util::UcpClient
   end
 
   def connected?
-    if @socket && !@socket.closed? && @connected
-      @connected = true
-    else
-      @connected = false
-    end
-    @connected
+    @connected = @socket && !@socket.closed? && @connected
   end
 
   def send_sync(ucp)

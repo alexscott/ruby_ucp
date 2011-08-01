@@ -22,11 +22,11 @@ class Ucp::Util::AuthRequest
 
   attr_reader :source_ip, :source_port, :account, :password
 
-  def initialize(account,password,source_ip=nil,source_port=nil)
-    @source_ip=source_ip
-    @source_port=source_port
-    @account=account
-    @password=password
+  def initialize(account, password, source_ip = nil, source_port = nil)
+    @source_ip = source_ip
+    @source_port = source_port
+    @account = account
+    @password = password
   end
 
 end

@@ -20,15 +20,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 class Ucp::Util::PackedMsg
 
-  attr_reader :encoded,:unencoded,:chars,:required_octets,:required_septets, :tainted
+  attr_reader :encoded, :unencoded,:chars, :required_octets, :required_septets, :tainted
 
   def initialize
-    @encoded=""
-    @unencoded=""
-    @required_septets=0
-    @required_octets=0
-    @chars=0
-    @tainted=false
+    @encoded = ""
+    @unencoded = ""
+    @required_septets = 0
+    @required_octets = 0
+    @chars = 0
+    @tainted = false
   end
 
 end
